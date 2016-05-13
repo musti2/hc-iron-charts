@@ -1,0 +1,169 @@
+<!--
+
+##### Highcharts library import
+You can remove references to highcharts from the component page if you already have them loaded on your page. Same applies for iron-ajax 
+
+##### Data Format
+
+If your data is in the following format: {"sensorreadings": { "temperature": 31, "humidity": 21 }} - than set the series data to [data.sensorreadings.temperature] - see line 224, 303 and 400 on the component page.
+
+##### Minimal Usage
+
+     <hc-iron-gauges url="sample-data/gauge-data.json"></hc-iron-gauges> 
+     or
+     <hc-iron-pie url="sample-data/pie-data.json"></hc-iron-pie>
+     or
+     <hc-iron-pie data='{
+      "series": [
+        {"name": "Microsoft Internet Explorer", "y": 56.33},
+          {"name": "Chrome", "y": 24.03},
+          {"name": "Firefox", "y": 10.38},
+          {"name": "Safari", "y": 4.77},
+          {"name": "Opera", "y": 0.91},
+          {"name": "Proprietary or Undetectable", "y": 0.2}
+      ]
+    }'></hc-iron-pie>
+
+    <hc-iron-gauge-vibration url="http://3.185.126.104:8080/get/asset/1"></hc-iron-gauge-vibration>
+    <hc-iron-gauge-temperature url="http://3.185.126.104:8080/get/asset/1"></hc-iron-gauge-temperature>
+    <hc-iron-gauge-humidity url="http://3.185.126.104:8080/get/asset/1"></hc-iron-gauge-humidity>
+
+
+@element px-time-series
+@demo demo.html
+@blurb Element that defines re-usable highcharts component.
+@homepage index.html
+-->
+
+<link rel="import" href="hc-chart-behaviours.html"/>
+
+<dom-module id="hc-iron-gauge">
+<style>
+.chart-container {
+  width: 100%; margin: 0 auto; height: 100%;
+}
+</style>
+  <template>
+      <!-- Iron Ajax -->
+      <iron-ajax id="ajax" url="{{url}}" last-response="{{data}}" debounce-duration="300"></iron-ajax>
+      <!--Gauge-->
+      <div id="container" class="chart-container"></div>
+  </template>
+
+  <script>
+    Polymer({
+      is: "hc-iron-gauge",
+      behaviors: [HCProperties],
+      _chartData: function (data) {
+        var humChart = new Highcharts.Chart({
+          colors: this.createSeriesColorsArray(this.dataVisColors, this.seriesColorOrder),
+          chart: {
+            inverted: false,
+            renderTo: this.$.container,
+            height: this.chartHeight,
+            width: this.chartWidth
+          },
+          title: {
+            text: '',
+            verticalAlign: 'bottom',
+            style: {
+                fontWeight: 'normal',
+                fontSize: "12px"
+            }
+          },
+          pane: {
+            startAngle: -150,
+            endAngle: 150,
+            background: [{
+              backgroundColor: {
+                  linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                  stops: [
+                      [0, '#FFF'],
+                      [1, '#333']
+                  ]
+              },
+              borderWidth: 0,
+              outerRadius: '109%'
+            }, {
+              backgroundColor: {
+                linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                stops: [
+                  [0, '#333'],
+                  [1, '#FFF']
+                ]
+              },
+              borderWidth: 1,
+              outerRadius: '107%'
+            }, {
+                // default background
+            }, {
+              backgroundColor: '#DDD',
+              borderWidth: 0,
+              outerRadius: '105%',
+              innerRadius: '103%'
+            }]
+          },
+          xAxis: {
+            title: {
+              text: null
+            },
+            minRange: 30,
+            min: 0,
+            max: 50
+          },
+          exporting: {
+            enabled: false
+          },
+          // the value axis
+          yAxis: {
+            min: this.min,
+            max: this.max,
+
+            minorTickInterval: 'auto',
+            minorTickWidth: 1,
+            minorTickLength: 10,
+            minorTickPosition: 'inside',
+            minorTickColor: '#666',
+
+            tickPixelInterval: 30,
+            tickWidth: 2,
+            tickPosition: 'inside',
+            tickLength: 10,
+            tickColor: '#666',
+            labels: {
+                step: 2,
+                rotation: 'auto'
+            },
+            plotBands: this.chartPlotBands
+          },
+          legend: {
+            enabled: this.legendEnabled,
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'top',
+            x: -40,
+            y: 80,
+            floating: true,
+            borderWidth: 1,
+            backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+            shadow: true
+          },
+          credits: {
+            enabled: false
+          },
+          series: [{
+            animation: false,
+            type: 'gauge',
+            name: 'Humidity',
+            visible: true,
+            data: [data.temperature.current_val],
+            dataLabels: {
+               enabled: false,
+
+            }
+          }]
+        });
+      }
+    });
+  </script>
+</dom-module>

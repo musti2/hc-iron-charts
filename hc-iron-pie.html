@@ -1,0 +1,70 @@
+<link rel="import" href="hc-chart-behaviours.html"/>
+
+<dom-module id="hc-iron-pie">
+<style>
+.chart-container {
+  width: 100%; margin: 0 auto; height: 100%;
+}
+</style>
+  <template>
+      <!-- Iron Ajax -->
+      <iron-ajax id="ajax" url="{{url}}" last-response="{{data}}" debounce-duration="300"></iron-ajax>
+
+      <div id="piecontainer" class="chart-container"></div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: "hc-iron-pie",
+      behaviors: [HCProperties],
+      _chartData: function (data) {
+        new Highcharts.Chart({
+          colors: this.createSeriesColorsArray(this.dataVisColors, this.seriesColorOrder),
+          chart: {
+            renderTo: this.$.piecontainer,
+            height: this.chartHeight,
+            width: this.chartWidth,
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+          },
+          title: {
+            text: ''
+          },
+          exporting: {
+            enabled: false
+          },
+          legend: {
+            enabled: this.legendEnabled
+          },
+          credits: {
+            enabled: false
+          },
+          tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+          },
+          plotOptions: {
+            pie: {
+              allowPointSelect: true,
+              cursor: 'pointer',
+              dataLabels: {
+                  enabled: false,
+                  format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                  style: {
+                      color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                  }
+              }
+            }
+          },
+          series: [{
+            name: "Brands",
+            data: data.series,
+            animation: false
+          }]
+        });
+      }
+    });
+  </script>
+</dom-module>

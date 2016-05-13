@@ -1,0 +1,124 @@
+<link rel="import" href="hc-chart-behaviours.html"/>
+<dom-module id="hc-iron-gauge-temperature">
+<style>
+.chart-container {
+  width: 100%; margin: 0 auto; margin-bottom: 0rem; margin-top: 0rem; height: 100%;
+}
+</style>
+  <template>
+    <!-- Iron Ajax -->
+    <iron-ajax id="ajax" url="{{url}}" last-response="{{data}}" debounce-duration="300"></iron-ajax>
+    <!--Gauges-->
+    <div id="tempcontainer" class="chart-container"></div>
+  </template>
+  <script>
+    Polymer({
+      is: "hc-iron-gauge-temperature",
+      // fetch hc-iron-charts behaviours 
+      /*
+       *   @ fetch common properties from hc-iron-charts and setup custom highchart options using hc-iron-gauge 
+       *   @ alternatively, you can use hc-iron-gauge for single gauges with different datasets
+       *
+      */
+      behaviors: [HCProperties],
+      // Humidity Gauge
+      _chartData: function (data) {
+        new Highcharts.Chart({
+          colors: this.createSeriesColorsArray(this.dataVisColors, this.seriesColorOrder),
+          chart: {
+            inverted: false,
+            renderTo: this.$.tempcontainer,
+            height: 150,
+            width: 150
+          },
+          title: {
+            text: ''
+          },
+          pane: {
+            startAngle: -150,
+            endAngle: 150,
+            background: [{
+              backgroundColor: {
+                  linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                  stops: [
+                      [0, '#FFF'],
+                      [1, '#333']
+                  ]
+              },
+              borderWidth: 0,
+              outerRadius: '109%'
+            }, {
+              backgroundColor: {
+                linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                stops: [
+                  [0, '#333'],
+                  [1, '#FFF']
+                ]
+              },
+              borderWidth: 1,
+              outerRadius: '107%'
+            }, {
+                // default background
+            }, {
+              backgroundColor: '#DDD',
+              borderWidth: 0,
+              outerRadius: '105%',
+              innerRadius: '103%'
+            }]
+          },
+          // the value axis
+          yAxis: {
+            min: 0,
+            max: 50,
+
+            minorTickInterval: 'auto',
+            minorTickWidth: 1,
+            minorTickLength: 10,
+            minorTickPosition: 'inside',
+            minorTickColor: '#666',
+
+            tickPixelInterval: 30,
+            tickWidth: 2,
+            tickPosition: 'inside',
+            tickLength: 10,
+            tickColor: '#666',
+            labels: {
+                step: 2,
+                rotation: 'auto'
+            },
+            plotBands: [{
+                from: 0,
+                to: 35,
+                color: '#55BF3B' // green
+            }, {
+                from: 35,
+                to: 40,
+                color: '#DDDF0D' // yellow
+            }, {
+                from: 40,
+                to: 50,
+                color: '#DF5353' // red
+            }]
+          },
+          credits: {
+            enabled: false
+          },
+          exporting: {
+            enabled: false
+          },
+          series: [{
+            animation: false,
+            type: 'gauge',
+            name: 'Temperature',
+            visible: true,
+            data: [data.temperature.current_val],
+            dataLabels: {
+               enabled: false,
+
+            }
+          }]
+        });
+      }
+    });
+  </script>
+</dom-module>

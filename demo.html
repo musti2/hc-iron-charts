@@ -1,0 +1,42 @@
+<!doctype html>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>px-bar-chart Demo</title>
+        <!-- Requires Webcomponents.js polyfill is provided by the page for browsers that don't support html imports -->
+        <script src="../webcomponentsjs/webcomponents-lite.min.js"></script>
+        <link rel="stylesheet" href="css/noprefix/px-bar-chart.css"/>
+        <!-- Import custom element. Note: see comment about relative paths to dependencies in the *.html file referenced below -->
+        <link rel="import" href="hc-chart-behaviours.html"/>
+        <link rel="import" href="hc-iron-gauge.html"/>
+        <link rel="import" href="hc-iron-pie.html"/>
+        <link rel="import" href="hc-iron-gauge-temperature.html"/>
+        <link rel="import" href="hc-iron-gauge-vibration.html"/>
+        <link rel="import" href="hc-iron-gauge-humidity.html"/>
+        <link rel="import" href="hc-iron-gauge-direction.html"/>
+    </head>
+
+    <body>
+
+        <h3>Highchart Gauges with Live Updates</h3>
+
+        <p>
+            This is assuming your data set is in the following format:
+        </p>
+
+        <p>
+            {"assetid":1,"desc":"raspberry pi","temperature":{"modified":1441587702,"current_val":23,"av_val":23},"humidity":{"modified":1441587702,"current_val":35,"av_val":35},"vibration":{"modified":1441587702,"current_val":17,"av_val":17}}
+        </p>
+
+        <p>
+            If your data is in the following format: {"sensorreadings": { "temperature": 31, "humidity": 21 }} - than set the series data to [data.sensorreadings.temperature] - see line 224 on the component page.
+        </p>
+        <px-card>
+         <!-- instance 1, "predix" theme -->
+        <hc-iron-pie url="sample-data/pie-data.json"></hc-iron-pie>
+        <hc-iron-gauge url="sample-data/gauge-data.json" min="0" max="50"></hc-iron-gauges>
+        </px-card>
+    </body>
+</html>

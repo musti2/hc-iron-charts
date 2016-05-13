@@ -1,0 +1,110 @@
+<link rel="import" href="hc-chart-behaviours.html"/>
+<dom-module id="hc-iron-gauge-humidity">
+<style>
+.chart-container {
+  width: 100%; margin: 0 auto; margin-bottom: 0rem; margin-top: 0rem; height: 100%;
+}
+</style>
+  <template>
+    <!-- Iron Ajax -->
+    <iron-ajax id="ajax" url="{{url}}" last-response="{{data}}" debounce-duration="300"></iron-ajax>
+    <!--Gauges-->
+    <div id="humidContainer" class="chart-container"></div>
+  </template>
+  <script>
+    Polymer({
+      is: "hc-iron-gauge-humidity",
+      // fetch hc-iron-charts behaviours 
+      /*
+       *   @ fetch common properties from hc-iron-charts and setup custom highchart options using hc-iron-gauge 
+       *   @ alternatively, you can use hc-iron-gauge for single gauges with different datasets
+       *
+      */
+      behaviors: [HCProperties],
+      // Humidity Gauge
+      _chartData: function (data) {
+        new Highcharts.Chart({
+          colors: this.createSeriesColorsArray(this.dataVisColors, this.seriesColorOrder),
+          chart: {
+            inverted: false,
+            renderTo: this.$.humidContainer,
+            height: 150,
+            width: 150
+          },
+          title: {
+            text: '',
+            verticalAlign: 'bottom',
+            style: {
+                fontWeight: 'normal',
+                fontSize: "12px"
+            }
+          },
+          xAxis: {
+            title: {
+              text: null
+            },
+            minRange: 30,
+            min: -15,
+            max: 60
+          },
+          exporting: {
+            enabled: false
+          },
+          yAxis: [{
+            min: 0,
+            max: 70,
+            tickPosition: 'outside',
+            lineWidth: 2,
+            minorTickPosition: 'outside',
+            tickLength: 5,
+            minorTickWidth: 1,
+            minorTickLength: 3,
+            labels: {
+              distance: 12,
+              rotation: 'auto'
+            },
+            tickInterval: 10,
+            offset: -20,
+            endOnTick: false,
+            showFirstLabel: false
+          }],
+          tooltip: {
+            valueSuffix: ''
+          },
+          plotOptions: {
+            gauge: {
+              dataLabels: {
+                  enabled: false
+              }
+            }
+          },
+          legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'top',
+            x: -40,
+            y: 80,
+            floating: true,
+            borderWidth: 1,
+            backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+            shadow: true
+          },
+          credits: {
+            enabled: false
+          },
+          series: [{
+            animation: false,
+            type: 'gauge',
+            name: 'Humidity',
+            visible: true,
+            data: [data.humidity.current_val],
+            dataLabels: {
+               enabled: false,
+
+            }
+          }]
+        });
+      }
+    });
+  </script>
+</dom-module>
